@@ -1,0 +1,39 @@
+
+R1
+1. Research XML library for reading/writing configuration.  			VLADIMIR
+1.1. Identify and upload to "Lib" GITHUB ( ElementTree WINNER)			VLADIMIR
+1.2. Define the XML attributes.							                VLADIMIR
+2. Implement the "XMLHandler" and "FileHandler" classes. (READER)		VICTOR
+2.1. Implement unit tests for the aforementioned classes. (READER)		VICTOR
+3. Implement classes and unit tests for "MenuSettings" objects.			GISELA
+3.1. Associate MenuSettings with FileHandler.  					        GISELA				
+4. Implement the "XMLHandler" and "FileHandler" classes. (WRITER)		DENILSON
+4.1. Implement unit tests for the aforementioned classes. (WRITER)		DENILSON
+
+R2
+5. Research and Identify Timer libraries for User Statistics		                  VICTOR	   
+6. Implement first draft of "SudokuSolver" class ("MenuSettings" -> <algorithm>)      VLADIMIR & VICTOR				
+
+
+
+<level>Medium
+	<level_name> </level_name>
+	<level_min_numbers>Peter Novig</level_min_numbers>
+	<level_max_numbers>Peter Novig</level_max_numbers>
+</level> 
+<algorithm>
+	<algorithm_type>Peter Novig</algorithm_type>
+	
+</algorithm>   (Backtracking, etc..)
+<output>
+	<output_path> </output_path>
+	<output_file_name> </output_file_name>
+	<default_output_path> </default_output_path>
+	<default_file_name> </default_file_name>
+</output>            
+<timer></timer>
+<howto></howto>
+  
+
+
+
