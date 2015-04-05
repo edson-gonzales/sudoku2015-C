@@ -1,8 +1,7 @@
+"""This module is in charge of testing the basic I/O functionality required to setting up properly the XML file for the Sudoku2015-C game"""
+
 import unittest
 
-# import sys
-# sys.path.append("../../src/handlers")
-# from ...src.handlers.xml_handler import XMLHandler
 from ...handlers.xml_handler import XMLHandler
 
 class TestXMLHandler(unittest.TestCase):
@@ -51,9 +50,19 @@ class TestXMLHandler(unittest.TestCase):
 	def test_range_of_missing_numbers_per_level(self):
 		xml = XMLHandler()
 		xml.load_file()
-		xml.change_text_fields("level","Easy","min","12")
+		xml.change_text_fields("level","Easy","min","9")
 		xml.save_file()
-		self.assertEquals(12, 12)
+		self.assertEquals(str(9),xml.retrieve_text_node_value("level","Easy","min"))
+		xml.change_text_fields("level","Easy","max","20")
+		xml.save_file()
+		self.assertEquals(str(20),xml.retrieve_text_node_value("level","Easy","max"))
+
+	def test_output_path_changes(self):
+		xml = XMLHandler()
+		xml.load_file()
+		xml.change_text_fields("output","Output Game","path","content/user/")
+		xml.save_file()
+		self.assertEquals("content/user/" , xml.retrieve_text_node_value("output","Game Output","path"))
 
 
 if __name__ == '__main__':

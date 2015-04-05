@@ -73,32 +73,32 @@ class XMLHandler(FileHandler):
 		return default_setting
 
 	def change_text_fields(self, parent_tag , name, child_tag, new_value):
+		"""This method is able to set text node values in second level tags like min, max, filename and path"""
 		for element in self.xml_root.iter(parent_tag):
 				if element.attrib["name"] == name:
 					child = element.find(str(child_tag))
 					child.text = str(new_value) 
 
-	# def printData(self):
-	# 	for element in self.xml_tree.iter():
-	# 		print element.tag, element.attrib
-
-	def read_all_settings(self, xml_tag="ALL"):
-		"""This method allows to show all "active/inactive" attribute "tag" defined into xml file which will be showed to user  """
-		quantity_of_level=0
+	def read_options_per_tag(self, xml_tag):
+		"""This method returns an array of options that will be used for Settings Module"""
+		options = []
 		for element in self.xml_root.iter(xml_tag):
-			quantity_of_level=quantity_of_level + 1
-			print str(quantity_of_level)+". " + (str(element.attrib["name"]))
-
-	def save_all_settings_into_array(self, xml_tag="ALL"):
-		"""This method allows XML settings file to be manipulated by showing all level "active/inactive" attribute "tag" defined into XML, but they are retrieved into array   """
-		my_list=[]
-		for element in self.xml_root.iter(xml_tag):
-			my_list.append(str(element.attrib["name"]))
-		return my_list
+				options.append(element.attrib["name"])
+		return options
 
 	def read_child_active_settings(self, parent_tag, child_tag):
 		"""This method allows to retrieve child tag values configured into XML settings file"""
+		default_setting = None
   		for element in self.xml_root.iter(parent_tag):
    			default_setting = element.find(str(child_tag)).text
   		return default_setting
+
+  	def retrieve_text_node_value(self, parent_tag, name, child_tag):
+		"""This method allows to retrieve child tag values configured into XML settings file"""
+		text = None
+  		for element in self.xml_root.iter(parent_tag):
+  			if element.attrib["name"] == name:
+   				text = (element.find(str(child_tag))).text
+  		return text
+  	
 			

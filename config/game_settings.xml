@@ -2,8 +2,8 @@
 <settings>
     <level active="false" name="Easy">
     	<level_id>1</level_id>
-    	<min>12</min>
-    	<max>15</max>
+    	<min>9</min>
+    	<max>20</max>
     </level>
     <level active="false" name="Medium">
     	<level_id>2</level_id>
@@ -31,7 +31,7 @@
 		<resolution_type>3</resolution_type>
     </algorithm>
     <output active="true" name="Game Output">
-    	<path>content\results\</path>
+    	<path>content/user/</path>
     	<filename>results.txt</filename> 	
     </output>
 </settings>
