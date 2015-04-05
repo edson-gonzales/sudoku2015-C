@@ -1,6 +1,5 @@
 #FileHandler.py
 import abc
-import os
 
 class FileHandler(object):
 	__metaclass__ = abc.ABCMeta
@@ -15,9 +14,7 @@ class FileHandler(object):
 		""" Save the data object to the output """
 		return
 
-	def build_root_path(self):
-		current_path = os.path.dirname(os.path.realpath(__file__))
-		root_path = os.path.sep.join(current_path.split(os.path.sep)[:-2])
-		return root_path
+
+
 
 
