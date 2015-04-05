@@ -82,10 +82,23 @@ class XMLHandler(FileHandler):
 	# 	for element in self.xml_tree.iter():
 	# 		print element.tag, element.attrib
 
+	def read_all_settings(self, xml_tag="ALL"):
+		"""This method allows to show all "active/inactive" attribute "tag" defined into xml file which will be showed to user  """
+		quantity_of_level=0
+		for element in self.xml_root.iter(xml_tag):
+			quantity_of_level=quantity_of_level + 1
+			print str(quantity_of_level)+". " + (str(element.attrib["name"]))
 
+	def save_all_settings_into_array(self, xml_tag="ALL"):
+		"""This method allows XML settings file to be manipulated by showing all level "active/inactive" attribute "tag" defined into XML, but they are retrieved into array   """
+		my_list=[]
+		for element in self.xml_root.iter(xml_tag):
+			my_list.append(str(element.attrib["name"]))
+		return my_list
 
-	
-
-
-	
-
+	def read_child_active_settings(self, parent_tag, child_tag):
+		"""This method allows to retrieve child tag values configured into XML settings file"""
+  		for element in self.xml_root.iter(parent_tag):
+   			default_setting = element.find(str(child_tag)).text
+  		return default_setting
+			
