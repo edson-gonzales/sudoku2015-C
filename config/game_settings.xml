@@ -5,12 +5,12 @@
     	<min>9</min>
     	<max>20</max>
     </level>
-    <level active="false" name="Medium">
+    <level active="true" name="Medium">
     	<level_id>2</level_id>
     	<min>40</min>
     	<max>50</max>
     </level>
-    <level active="true" name="Hard">
+    <level active="false" name="Hard">
     	<level_id>3</level_id>
     	<min>60</min>
     	<max>70</max>
@@ -24,14 +24,14 @@
     <algorithm active="false" name="Backtracking">
 		<resolution_type>1</resolution_type>
     </algorithm>
-    <algorithm active="true" name="Peter Novig">
+    <algorithm active="false" name="Peter Novig">
 		<resolution_type>2</resolution_type>
     </algorithm>
-    <algorithm active="false" name="Brute Force">
+    <algorithm active="true" name="Brute Force">
 		<resolution_type>3</resolution_type>
     </algorithm>
     <output active="true" name="Game Output">
-    	<path>content/user/</path>
-    	<filename>results.txt</filename> 	
+    	<path>content2/user2/</path>
+    	<filename>results2.txt</filename> 	
     </output>
 </settings>

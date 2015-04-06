@@ -1,82 +1,124 @@
-# menu_settings.py
+""" MenuSettings module basically just prints information that is managed by XML Handler"""
 from ..handlers.file_handler import FileHandler
 from ..handlers.xml_handler import XMLHandler
 
 class MenuSettings(object):
    def __init__(self):
+      """" Loads the XML file and sets the order of the menu sections"""
+      self.current_response = None
       self.xml_file = XMLHandler()
       self.xml_file.load_file()
-      self.print_current_configuration()
-      self.print_level_settings()
-      self.print_algorithm_settings()
-      self.print_output_settings()
+      self.show_current_configuration()
+      self.menu_level_settings()
+      self.menu_algorithm_settings()
+      self.menu_output_settings()
 
-   def print_current_configuration(self):
-      print ("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-      print ("~~~~~~~~~~~Welcome to the Sudoku2015-C game!~~~~~~~~~~~~~~~")
-      print ("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+   def show_current_configuration(self):
+      print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+      print("~~~~~~~~~~~Welcome to the Sudoku2015-C game!~~~~~~~~~~~~~~~")
+      print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
       print("============================================================")
       print("=================CURRENT XML CONFIGURATION==================")
       print("============================================================")
-      print "Current level: " + (self.xml_file.read_default_active_setting('level'))
-      print "Current algorithm: " + (self.xml_file.read_default_active_setting('algorithm'))
-      print "Current game output: " + (self.xml_file.read_child_active_settings('output','path'))
-      print "Current filename: " + (self.xml_file.read_child_active_settings('output','filename'))
+      print(self.__read_xml_settings())
 
-   def print_level_settings(self):
+
+   def menu_level_settings(self):
       print("============================================================")
       print("======================Select a LEVEL========================")
       print("============================================================")
-      my_level_list=self.xml_file.read_options_per_tag('level')
-      print(self._ask_multiple_options(my_level_list))   
-      correct_level=True
-      while correct_level:
-         level_type = raw_input("Write a valid level name to be used:")
-         if level_type in my_level_list:
-            self.xml_file.define_default_active_setting("level",level_type)
-            self.xml_file.save_file()
-            correct_level=False
-            print("Level: "+str(level_type) +" saved successfully as default option")  
-         else:
-            print("Not valid level, try again")  
+      section = 'level'
+      my_level_list = self.__read_xml_options(section)
+      print(self.__show_multiple_options(my_level_list))
+      if(self.__validate_user_response(my_level_list)):
+         self.__save_current_response(section)
+         print("Level: " +str(self.current_response) + " saved successfully as default option")
 
-   def print_algorithm_settings(self):
+
+   def menu_algorithm_settings(self):
       print("============================================================")
       print("===================Select a ALGORITHM=======================")
       print("============================================================")
-      my_algorithm_list=self.xml_file.read_options_per_tag('algorithm')
-      print(self._ask_multiple_options(my_algorithm_list)) 
-      correct_algorithm=True
-      while correct_algorithm:
-         algorithm_type = raw_input("Write a valid algorithm name  to be used:")
-         if algorithm_type in my_algorithm_list:
-            self.xml_file.define_default_active_setting("algorithm",algorithm_type)   
-            self.xml_file.save_file()
-            print("Algorithm: "+str(algorithm_type) +" saved successfully as default option")  
-            correct_algorithm=False
-         else:
-            print("Not a valid algorithm, try again")
+      section = 'algorithm'
+      my_algorithm_list = self.__read_xml_options('algorithm')
+      print(self.__show_multiple_options(my_algorithm_list))
+      if(self.__validate_user_response(my_algorithm_list)):
+         self.__save_current_response(section)
+         print("Level: " + str(self.current_response) + " saved successfully as default option")
 
-   def print_output_settings(self):
+   def menu_output_settings(self):
+      self.__menu_output_path()
+      self.__menu_output_filename()
+
+   def __menu_output_path(self):
       print("============================================================")
       print("=================Enter a new OUTPUT PATH====================")
       print("============================================================")
-      output_path = raw_input("Write the output path :")
-      self.xml_file.change_text_fields("output","Game Output","path",output_path)
-      self.xml_file.save_file()
-      print("Path: "+str(output_path) +" saved successfully as default output path")  
+      section = 'path'
+      output_path = self.__ask_user_input("Enter a valid output path")
+      self.__save_current_output_response(section, output_path)
+      print("Path: "+str(output_path) + " saved successfully as default output path")
 
+   def __menu_output_filename(self):
       print("============================================================")
       print("===================Enter a FILE NAME========================")
       print("============================================================")
-      file_name = raw_input("Write the File Name :")
-      self.xml_file.change_text_fields("output","Game Output","filename",file_name)
-      self.xml_file.save_file()
-      print("Filename: "+str(file_name) +" saved successfully as default output filename") 
+      section = 'filename'
+      file_name = self.__ask_user_input("Enter a valid file name")
+      self.__save_current_output_response(section, file_name)
+      print("File Name: "+str(file_name) +" saved successfully as default file name")
 
-   def _ask_multiple_options(self, options):
+   def __read_xml_settings(self):
+      """ Provides a summary of all default current default options."""
+      xml_settings = "Current level: "
+      xml_settings += (self.xml_file.read_default_active_setting('level'))
+      xml_settings += "\n" + "Current algorithm: "
+      xml_settings += (self.xml_file.read_default_active_setting('algorithm'))
+      xml_settings += "\n" + "Current game output: "
+      xml_settings += (self.xml_file.read_child_active_settings('output', 'path'))
+      xml_settings += "\n" + "Current filename: "
+      xml_settings += (self.xml_file.read_child_active_settings('output', 'filename'))
+      return xml_settings
+
+   def __read_xml_options(self, tag_name):
+      """ Returns an array of all xml tag with a attrib name"""
+      return self.xml_file.read_options_per_tag(tag_name)
+
+   def __show_multiple_options(self, options):
+      """ Provides a sorted menu of all xml tags of a certain type"""
       question = ""
       for index, option in enumerate(options):
-          question =  question + "\n[" + str(index+1) + "] " + option
+          question = question + "\n[" + str(index+1) + "] " + option
       question = question + "\n "
       return question
+
+   def __validate_user_response(self, options):
+      """" Evaluates the user response in a loop until a correct answer is set."""
+      is_response_valid = False
+      while is_response_valid is False:
+         response = self.__ask_user_input("Enter a valid option")
+         if response in options:
+            is_response_valid = True
+            self.current_response = response
+         else:
+            print("Invalid option, please try again")
+
+      return is_response_valid
+
+
+   def __ask_user_input(self, sentence):
+      """" Calls the python 2 raw_input method appending a colon character."""
+      user_input = raw_input(sentence + " : ")
+      return user_input
+
+   def __save_current_response(self, section):
+      """" Save the settings for first level xml tags."""
+      self.xml_file.define_default_active_setting(section, self.current_response)
+      self.xml_file.save_file()
+
+   def __save_current_output_response(self, section, response):
+      """" Save the settings for second level "output" xml_tags."""
+      self.xml_file.change_text_fields("output", "Game Output", section, response)
+      self.xml_file.save_file()
+
+
