@@ -28,12 +28,12 @@ class XMLHandler(FileHandler):
 
 	def load_file(self, input_source="config\game_settings.xml"):
 		"""
-		This method needed to be defined, otherwise a missing abstract method instantiation error 
+		This method needed to be defined, otherwise a missing abstract method instantiation error
 		would have been thrown by ABC metaclass.
-		Basically is in charge of reading the XML default file from disk, by default the file 
-		should be located in "Sudoku2015-C\config\game_settings.xml" path. but only the relative 
+		Basically is in charge of reading the XML default file from disk, by default the file
+		should be located in "Sudoku2015-C\config\game_settings.xml" path. but only the relative
 		path config\game_settings.xml can be provided, even no parameter can be set cause the
-		 optional parameter has the default path assigned.
+		optional parameter has the default path assigned.
 		Keyword arguments:
 		input_source -- relative path for accessing the XML file
 		"""
@@ -43,12 +43,12 @@ class XMLHandler(FileHandler):
 
 	def save_file(self, output=None, data=None):
 		"""
-		This method needed to be defined, otherwise a missing abstract method instantiation error 
-		would have been thrown by ABC metaclass. 
-		It has two optional parameters which take same default values of laod_file method if they 
+		This method needed to be defined, otherwise a missing abstract method instantiation error
+		would have been thrown by ABC metaclass.
+		It has two optional parameters which take same default values of laod_file method if they
 		are not provided by the user and then uses the write method of ET library.
 		Keyword arguments:
-		output -- relative path for writing the XML file 
+		output -- relative path for writing the XML file
 		data -- XML info that will be written into the file
 		"""
 		if output is None:
@@ -59,7 +59,7 @@ class XMLHandler(FileHandler):
 		if data is None:
 			data = self.xml_root
 
-		self.xml_tree.write(output, "UTF-8")
+		self.xml_tree = ET.ElementTree(data)
 
 		try:
 			self.xml_tree.write(output, "UTF-8")
@@ -68,11 +68,13 @@ class XMLHandler(FileHandler):
 
 	def __get_path(self, input_source):
 		"""
-		Private parameter that retrieves the full path of the XMl file by appedning the Project
+		Private parameter that retrieves the full path of the XMl file by appending the Project
 		absolute path and the XML relative path, it should generate a valid path independent
 		of the OS.
 		Keyword arguments:
 		data -- Relative path of the XML file
+		Returned parameters:
+		abs_file_path -- absolute path to the XML file, performed thanks to os.path.join method 
 		 """
 		file_path = os.path.normpath(input_source)
 		abs_file_path = os.path.join(settings.root_path, file_path)
@@ -93,26 +95,28 @@ class XMLHandler(FileHandler):
 			else:
 				element.set("active", "false")
 
-	def retrieve_tag_summary(self, xml_tag):
-		"""This method returns a summary of active values for all tags with the same "xml_tag"
-		name.
+	def read_active_value_for_setting(self, xml_tag, name):
+		"""
+		This method returns the "active" attribute value for the tag which a certain name
 		Keyword arguments:
 		xml_tag -- tag name (i.e. level, algorithm) from which the search will be narrowed down
+		name -- attribute name (i.e. name = Easy) from which the search will be even more specific
+		Returned parameters:
+		active_value -- active attribute value for the tag whith the name.
 		"""
-		tag_summary = []
+		active_value = ""
 		for element in self.xml_root.iter(xml_tag):
-			tag_summary.append({})
-			if tag_summary and 'name' in element.attrib.keys():
-   				tag_summary[-1][element.attrib['name']] = element.attrib['active']
-   		return tag_summary
+			if str(element.attrib["name"]) == name:
+				active_value = str(element.attrib["active"])
+		return active_value
 
 	def read_default_active_setting(self, xml_tag):
 		"""
-		This method allows XML settings file to be manipulated by modifying the "active"
-		attribute to true in the "tag" defined and the remaining tags will have their attributes
-		set to false
+		This method returns the current tag name that has "active" attribute set to true
 		Keyword arguments:
 		xml_tag -- tag name (i.e. level, algorithm) from which the search will be narrowed down
+		Returned parameters:
+		default_setting -- current tag name that has "active" attribute set to true.
 		"""
 		default_setting = ""
 		for element in self.xml_root.iter(xml_tag):
@@ -121,28 +125,29 @@ class XMLHandler(FileHandler):
 		return default_setting
 
 	def change_text_fields(self, parent_tag, name, child_tag, new_value):
-		"""
-		This method is able to set text node values in second level tags like min, max, 
-		filename and path.
+		"""This method is able to set text node values in second level tags like min, max, filename
+		and path.
 		Keyword arguments:
-		parent_tag -- parent tag name (i.e. level, algorithm) from which the search will be started
-		name -- attibute name (i.e. level name = Easy) from which the search will be narrowed down
-		child_tag -- child tag name (i.e. min, path) for setting up there new_value text node
-		new_value -- the text value that will be set in the child_tag
+		parent_tag -- parent tag name (i.e. level, algorithm) from which the search will be started.
+		name -- attribute name (i.e. level name = Easy) from which the search will be narrowed down.
+		child_tag -- child tag name (i.e. min, path) for setting up there new_value text node.
+		new_value -- the text value that will be set in the child_tag.
 		"""
 		for element in self.xml_root.iter(parent_tag):
-				if element.attrib["name"] == name:
-					child = element.find(str(child_tag))
-					child.text = str(new_value) 
+			if element.attrib["name"] == name:
+				child = element.find(str(child_tag))
+				child.text = str(new_value)
 
 	def read_options_per_tag(self, xml_tag):
 		"""This method returns an array of options that will be used for Settings Module
 		Keyword arguments:
-		xml_tag -- tag name (i.e. level, algorithm) from which the search will be narrowed down
+		xml_tag -- tag name (i.e. level, algorithm) from which the search will be narrowed down.
+		Returned parameters:
+		options -- array of all xml tags with a certain attribute name.
 		"""
 		options = []
 		for element in self.xml_root.iter(xml_tag):
-				options.append(element.attrib["name"])
+			options.append(element.attrib["name"])
 		return options
 
 	def read_child_active_settings(self, parent_tag, child_tag):
@@ -150,6 +155,8 @@ class XMLHandler(FileHandler):
 		Keyword arguments:
 		parent_tag -- parent tag name (i.e. level, algorithm) from which the search will be started
 		child_tag -- child tag name (i.e. min, path) for looking for an specific child tag
+		Returned parameters:
+		default_setting -- node text value of the child tag.
 		"""
 		default_setting = ""
   		for element in self.xml_root.iter(parent_tag):
@@ -157,17 +164,17 @@ class XMLHandler(FileHandler):
   		return default_setting
 
   	def retrieve_text_node_value(self, parent_tag, name, child_tag):
-		"""This method allows to retrieve child tag values configured into XML settings file
-		Keyword arguments:
+		"""This method allows to retrieve child tag values configured into XML settings file for
+		a specific parent tag with a certain name attribute.
 		Keyword arguments:
 		parent_tag -- parent tag name (i.e. level, algorithm) from which the search will be started
 		name -- attibute name (i.e. level name = Easy) from which the search will be narrowed down
 		child_tag -- child tag name (i.e. min, path) for looking for an specific child tag
+		Returned parameters:
+		text -- node text value of the child tag with an specific name.
 		"""
 		text = None
   		for element in self.xml_root.iter(parent_tag):
   			if element.attrib["name"] == name:
    				text = (element.find(str(child_tag))).text
-  		return text
-  	
-			
+  		return text			

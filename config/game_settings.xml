@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <settings>
-    <level active="false" name="Easy">
+    <level active="true" name="Easy">
     	<level_id>1</level_id>
     	<min>9</min>
     	<max>20</max>
     </level>
-    <level active="true" name="Medium">
+    <level active="false" name="Medium">
     	<level_id>2</level_id>
     	<min>40</min>
     	<max>50</max>
@@ -17,21 +17,21 @@
     </level>
     <level active="false" name="Custom">
     	<level_id>4</level_id>
-    	<min>60</min>
-    	<max>70</max>
+    	<min>9</min>
+    	<max>20</max>
     </level>
 
-    <algorithm active="false" name="Backtracking">
+    <algorithm active="true" name="Backtracking">
 		<resolution_type>1</resolution_type>
     </algorithm>
     <algorithm active="false" name="Peter Novig">
 		<resolution_type>2</resolution_type>
     </algorithm>
-    <algorithm active="true" name="Brute Force">
+    <algorithm active="false" name="Brute Force">
 		<resolution_type>3</resolution_type>
     </algorithm>
     <output active="true" name="Game Output">
-    	<path>content2/user2/</path>
-    	<filename>results2.txt</filename> 	
+    	<path>content/user/</path>
+    	<filename>results.txt</filename> 	
     </output>
 </settings>
