@@ -8,15 +8,14 @@ class MenuSettings(object):
       self.current_response = None
       self.xml_file = XMLHandler()
       self.xml_file.load_file()
+
+   def show_settings_menu(self):
       self.show_current_configuration()
       self.menu_level_settings()
       self.menu_algorithm_settings()
       self.menu_output_settings()
 
    def show_current_configuration(self):
-      print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-      print("~~~~~~~~~~~Welcome to the Sudoku2015-C game!~~~~~~~~~~~~~~~")
-      print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
       print("============================================================")
       print("=================CURRENT XML CONFIGURATION==================")
       print("============================================================")
@@ -79,6 +78,18 @@ class MenuSettings(object):
       xml_settings += "\n" + "Current filename: "
       xml_settings += (self.xml_file.read_child_active_settings('output', 'filename'))
       return xml_settings
+
+   def retrieve_default_settings(self):
+      """ Provides a dictionary of all default current default options."""
+      default_settings = {
+         "level" : self.xml_file.read_default_active_setting('level'),
+         "algorithm" : self.xml_file.read_default_active_setting('algorithm'),
+         "path" : self.xml_file.read_child_active_settings('output', 'path'),
+         "filename" : self.xml_file.read_child_active_settings('output', 'filename'),
+         "min": self.xml_file.retrieve_text_node_value("level", self.xml_file.read_default_active_setting('level'), "min"),
+         "max": self.xml_file.retrieve_text_node_value("level", self.xml_file.read_default_active_setting('level'), "max"),
+      }
+      return default_settings
 
    def __read_xml_options(self, tag_name):
       """ Returns an array of all xml tag with a attrib name

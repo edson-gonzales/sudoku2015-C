@@ -26,7 +26,7 @@ class XMLHandler(FileHandler):
 		self.xml_root = None
 		self.xml_absolute_file_path = None
 
-	def load_file(self, input_source="config\game_settings.xml"):
+	def load_file(self, input_source="config/game_settings.xml"):
 		"""
 		This method needed to be defined, otherwise a missing abstract method instantiation error
 		would have been thrown by ABC metaclass.
@@ -72,7 +72,7 @@ class XMLHandler(FileHandler):
 		absolute path and the XML relative path, it should generate a valid path independent
 		of the OS.
 		Keyword arguments:
-		data -- Relative path of the XML file
+		input_source -- Relative path of the XML file
 		Returned parameters:
 		abs_file_path -- absolute path to the XML file, performed thanks to os.path.join method 
 		 """
