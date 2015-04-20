@@ -61,6 +61,5 @@ class TestSudokuGrid(unittest.TestCase):
     grid.load_grid_values(s_grid)
     self.assertEquals(expected_result, grid.display_2D_grid())
 
-
 if __name__ == '__main__':
   unittest.main()

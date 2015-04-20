@@ -109,3 +109,6 @@ class SudokuSolver(object):
   def is_string_grid_valid(self):
     """ Checks if the long string with 81 characters contain only numbers in its content"""
     return self.string_grid.isdigit()
+
+
+

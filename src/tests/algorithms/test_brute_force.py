@@ -80,6 +80,5 @@ class TestBruteForce(unittest.TestCase):
     index = 45
     self.assertTrue(force.valid_for_block(index, guess))
 
-
 if __name__ == '__main__':
   unittest.main()

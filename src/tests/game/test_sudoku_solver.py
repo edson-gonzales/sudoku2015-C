@@ -27,7 +27,6 @@ class TestSudokuSolver(unittest.TestCase):
     print (solver.display_grid_result_with_format("2D"))
     self.assertEquals(0, solver.string_grid_resolved.count('0'))
 
-
   def test_solver_for_TXT_files_is_working_fine(self):
     solver = SudokuSolver(PeterNorvig())
     solver.solve_sudoku_from_txt_file("content/sources/file_t_001.txt")
