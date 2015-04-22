@@ -48,7 +48,7 @@ class TestBruteForce(unittest.TestCase):
     1, 1, 1, 1, 1, 1, 1, 1, 1]
     guess = 9
     index = 8
-    self.assertTrue(force.valid_for_row(index, guess))
+    self.assertTrue(force.validate_row(index, guess))
 
   def test_validation_of_column_for_a_guess(self):
     force = BruteForce()
@@ -63,7 +63,7 @@ class TestBruteForce(unittest.TestCase):
     9, 1, 1, 1, 1, 1, 1, 1, 1]
     guess = 1
     index = 0
-    self.assertTrue(force.valid_for_column(index, guess))
+    self.assertTrue(force.validate_column(index, guess))
 
   def test_validation_of_block_for_a_guess(self):
     force = BruteForce()
@@ -78,7 +78,7 @@ class TestBruteForce(unittest.TestCase):
     1, 1, 1, 1, 1, 1, 1, 1, 1]
     guess = 5
     index = 45
-    self.assertTrue(force.valid_for_block(index, guess))
+    self.assertTrue(force.validate_block(index, guess))
 
 if __name__ == '__main__':
   unittest.main()

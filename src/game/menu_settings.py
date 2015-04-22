@@ -1,28 +1,32 @@
 """ MenuSettings module basically just prints information that is managed by XML Handler"""
+from menu_base import MenuBase
 from ..handlers.file_handler import FileHandler
 from ..handlers.xml_handler import XMLHandler
 
-class MenuSettings(object):
+class MenuSettings(MenuBase):
    def __init__(self):
-      """ Loads the XML file and sets the order of the menu sections"""
+      """ Loads the XML file and sets the order of the menu sections
+      Note: This subclass is going to inherit useful and generic methods of MenuBase superclass
+      """
+      super(MenuSettings, self).__init__()
       self.current_response = None
       self.xml_file = XMLHandler()
       self.xml_file.load_file()
 
    def show_settings_menu(self):
       self.show_current_configuration()
-      self.menu_level_settings()
-      self.menu_algorithm_settings()
-      self.menu_output_settings()
+      self.show_menu_level_settings()
+      self.show_menu_algorithm_settings()
+      self.show_menu_output_settings()
 
    def show_current_configuration(self):
       print("============================================================")
       print("=================CURRENT XML CONFIGURATION==================")
       print("============================================================")
-      print(self.__read_xml_settings())
+      print(self.__retrieve_xml_settings())
 
 
-   def menu_level_settings(self):
+   def show_menu_level_settings(self):
       print("============================================================")
       print("======================Select a LEVEL========================")
       print("============================================================")
@@ -34,7 +38,7 @@ class MenuSettings(object):
          print("Level: " +str(self.current_response) + " saved successfully as default option")
 
 
-   def menu_algorithm_settings(self):
+   def show_menu_algorithm_settings(self):
       print("============================================================")
       print("===================Select a ALGORITHM=======================")
       print("============================================================")
@@ -45,29 +49,29 @@ class MenuSettings(object):
          self.__save_current_response(section)
          print("Level: " + str(self.current_response) + " saved successfully as default option")
 
-   def menu_output_settings(self):
-      self.__menu_output_path()
-      self.__menu_output_filename()
+   def show_menu_output_settings(self):
+      self.__show_menu_output_path()
+      self.__show_menu_output_filename()
 
-   def __menu_output_path(self):
+   def __show_menu_output_path(self):
       print("============================================================")
       print("=================Enter a new OUTPUT PATH====================")
       print("============================================================")
       section = 'path'
-      output_path = self.__ask_user_input("Enter a valid output path")
+      output_path = super(MenuSettings, self).ask_user_input("Enter a valid output path")
       self.__save_current_output_response(section, output_path)
       print("Path: " + str(output_path) + " saved successfully as default output path")
 
-   def __menu_output_filename(self):
+   def __show_menu_output_filename(self):
       print("============================================================")
       print("===================Enter a FILE NAME========================")
       print("============================================================")
       section = 'filename'
-      file_name = self.__ask_user_input("Enter a valid file name")
+      file_name = super(MenuSettings, self).ask_user_input("Enter a valid file name")
       self.__save_current_output_response(section, file_name)
       print("File Name: " + str(file_name) + " saved successfully as default file name")
 
-   def __read_xml_settings(self):
+   def __retrieve_xml_settings(self):
       """ Provides a summary of all default current default options."""
       xml_settings = "Current level: "
       xml_settings += (self.xml_file.read_default_active_setting('level'))
@@ -113,10 +117,13 @@ class MenuSettings(object):
       """" Evaluates the user response in a loop until a correct answer is set.
       Keyword arguments:
       options -- array of all xml tags with a certain attribute name.
+      Returned parameter:
+      is_response_valid -- return True if the user chooses one of the valid options.
+      (e.g. Easy for level, or Backtracking for algorithm)
       """
       is_response_valid = False
       while is_response_valid is False:
-         response = self.__ask_user_input("Enter a valid option")
+         response = super(MenuSettings, self).ask_user_input("Enter a valid option")
          if response in options:
             is_response_valid = True
             self.current_response = response
@@ -124,15 +131,6 @@ class MenuSettings(object):
             print("Invalid option, please try again")
 
       return is_response_valid
-
-
-   def __ask_user_input(self, sentence):
-      """" Calls the python 2 raw_input method appending a colon character.
-      Keyword arguments:
-      sentence -- the question that eill be displayed in command line.
-      """
-      user_input = raw_input(sentence + " : ")
-      return user_input
 
    def __save_current_response(self, section):
       """" Save the settings for first level xml tags.
@@ -148,7 +146,9 @@ class MenuSettings(object):
       section -- represents the second level section of the command line menu (i.e. path, filename).
       response -- value introduced by the user through the command line.
       """
-      self.xml_file.change_text_fields("output", "Game Output", section, response)
+      tag = "output"
+      attrib = "Game Output"
+      self.xml_file.change_text_fields(tag, attrib, section, response)
       self.xml_file.save_file()
 
 

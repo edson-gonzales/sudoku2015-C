@@ -10,7 +10,8 @@ class Backtracking(Algorithm):
     """
     Initializes the variables that will be used througout the class.
     Keyword arguments:
-      self.grid -- the input value that is a string of 81 characters
+      self.grid -- the input value that is a string of 81 characters where zeros represent
+      empty values.
     """
     self.grid = None
 
@@ -19,8 +20,8 @@ class Backtracking(Algorithm):
     """
     Load the puzzle and solve it.
     Keyword arguments:
-      grid_basic_format -- a  string with 81 digit characters.
-    """ 
+      grid_basic_format -- a  string with 81 digit characters where zeros represent empty values.
+    """
     self.load_puzzle(grid_basic_format)
     self.solve_backtracking()
 
@@ -28,8 +29,9 @@ class Backtracking(Algorithm):
     """
     Receives a string with 81 characters and transforms it to a list of list
     Keyword arguments:
-      grid_basic_format -- a  string with 81 digit characters.
-      dimension -- an integer that represents the numbers that will contain each list
+      grid_basic_format -- a  string with 81 digit characters where zeros represent empty spaces.
+    Returned parameters:
+       list_of_list  -- A  2-dimensional array of size 9 x 9 composed of integer values.
     """
     dimension = 9
     list_of_numbers = [int(n) for n in grid_basic_format]
@@ -38,60 +40,145 @@ class Backtracking(Algorithm):
       list_of_list[row] = list_of_numbers[row * dimension : (row + 1) * dimension]
     self.grid = list_of_list
 
-  def find_next_cell_to_fill(self, i, j):
+  def find_next_cell_to_fill(self, start_x, start_y):
     """
-    Return the cell that is unfilled, the cell that contains 0
+    Return the cell that is unfilled, the cell that contains zero 0 value
+    Keyword arguments:
+      start_x -- row position where the search operation will start (e.g. from 3 to 9).
+      start_y -- column position where the search operation will start (e.g. from 4 to 9).
+    Returned parameters:
+      cell_position -- tuple of values (pos_x, pos_y) where the first zero cell is found.
     """
-    for x in range(i,9):
-      for y in range(j,9):
-        if self.grid[x][y] == 0:
-          return x, y
-    for x in range(0,9):
-      for y in range(0,9):
-        if self.grid[x][y] == 0:
-          return x, y
-    return -1, -1
 
-  def is_valid(self, i, j, e):
+    cell_position = None
+    for pos_x in range(start_x, 9):
+      cell_position = self.find_cell_in_row(pos_x, start_y)
+      if cell_position is not None:
+        return cell_position
+
+    for pos_x in range(0, 9):
+      cell_position = self.find_cell_in_row(pos_x, 0)
+      if cell_position is not None:
+        return cell_position
+
+    if cell_position is None:
+      cell_position = (-1, -1)
+
+    return cell_position
+
+
+  def find_cell_in_row(self, pos_x, start_y):
     """
-    Validates that the cell is not breaking the rule that establishes that a row 
+    Look for the first cell that is unfilled in a specific row, cell should contain zero value
+    Keyword arguments:
+      pos_x -- specific row where the search will be performed.
+      start_y -- column position where the search operation will start (e.g. from 4 to 9).
+    Returned parameters:
+      cell_position -- tuple of values (pos_x, pos_y) where the first zero cell is found.
+    """
+    cell_position = None
+    for pos_y in range(start_y, 9):
+      if self.grid[pos_x][pos_y] == 0:
+        cell_position = (pos_x, pos_y)
+        break
+    return cell_position
+
+  def is_valid_guess(self, pos_x, pos_y, guess):
+    """
+    Checks if the guess is not breaking the rule that establishes that a row, column and section
     should only have one occurrence of numbers from 1 to 9.
-      It finds the top left x,y co-ordinates of the section containing the i,j cell
+    Keyword arguments:
+      pos_x -- specific row where the guess is located within the 2-dimensional array.
+      pos_y -- specific column where the guess is located within the 2-dimensional array.
+      guess -- value from 1 to 9 that will be checked if it is valid to solve the puzzle.
     """
-    row_ok = all([e != self.grid[i][x] for x in range(9)])
-    if row_ok:
-      column_ok = all([e != self.grid[x][j] for x in range(9)])
-      if column_ok:
-        sec_topx, sec_topy = 3 *(i/3), 3 *(j/3)
-        for x in range(sec_topx, sec_topx+3):
-          for y in range(sec_topy, sec_topy+3):
-            if self.grid[x][y] == e:
-              return False
-        return True
-    return False
+    valid_guess = False
+    if self.validate_row(pos_x, guess):
+      if self.validate_column(pos_y, guess):
+        valid_guess = self.validate_section(pos_x, pos_y, guess)
+    return valid_guess
 
-  def solve_backtracking(self, i=0, j=0):
+  def validate_row(self, pos_x, guess):
+    """ Validates that the "guess" filled in an "pos_x" row is not breaking the puzzle rule
+    that establishes that a row should only have one occurrence of numbers from 1 to 9.
+    Keyword arguments:
+      pos_x -- index that is tracking the row where the guess is located.
+      guess -- value from 1 to 9 that will be validated in this method.
     """
-    Method that visit the empty cells (contains 0) and solve a sudoku game
-    validating that an entered digit is valid.
+    row_ok = all([guess != self.grid[pos_x][y_index] for y_index in range(9)])
+    return row_ok
+
+  def validate_column(self, pos_y, guess):
+    """ Validates that the "guess" filled in an "pos_y" column is not breaking the puzzle rule
+    that establishes that a column should only have one occurrence of numbers from 1 to 9.
+    Keyword arguments:
+      pos_y -- index that is tracking the column where the guess is located.
+      guess -- value from 1 to 9 that will be validated in this method.
     """
-    i, j = self.find_next_cell_to_fill(i, j)
-    if i == -1:
+    column_ok = all([guess != self.grid[x_index][pos_y] for x_index in range(9)])
+    return column_ok
+
+  def validate_section(self, pos_x, pos_y, guess):
+    """ Validates that the "guess" filled in an coordinates (pos_x, pos_y) is not breaking the puzzle rule
+    that establishes that a section should only have one occurrence of numbers from 1 to 9.
+    Keyword arguments:
+      pos_x -- index that is tracking the row where the guess is located.
+      pos_y -- index that is tracking the column where the guess is located.
+      guess -- value from 1 to 9 that will be validated in this method.
+    Method parameters:
+      sec_topx -- top row index of the puzzle section (block) where the guess belongs
+      sec_topy -- top column index of the puzzle section (block) where the guess belongs
+    """
+    valid_section = True
+    sec_topx, sec_topy = 3 *(pos_x/3), 3 *(pos_y/3)
+    for x_index in range(sec_topx, sec_topx+3):
+      valid_section = self.validate_section_row(x_index, sec_topy, guess)
+      if valid_section is False:
+        return valid_section
+    return valid_section
+
+
+  def validate_section_row(self, x_index, sec_topy, guess):
+    """ Validates within the section row of the guess is valid given the respective section columns
+    Keyword arguments:
+      x_index -- index that is tracking the row where the guess is located.
+      sec_topy -- top column index of the puzzle section (block) where the guess belongs
+      guess -- value from 1 to 9 that will be validated in this method.
+    """
+    valid_section = True
+    for y_index in range(sec_topy, sec_topy+3):
+      if self.grid[x_index][y_index] == guess:
+        valid_section = False
+        break
+    return valid_section
+
+  def solve_backtracking(self, pos_x=0, pos_y=0):
+    """
+    Recursive Method which visits empty cells and start guessing filling numbers and calling
+    the is_valid_guess() method which in turn will be in charge of verifying the correcteness
+    of the guess, if the guess is valid it will be added to the puzzle,
+    otherwise the method will be called recursively until every empty cell is filled
+    Keyword arguments:
+      pos_x -- specific row where the guess is located within the 2-dimensional array.
+      pos_y -- specific column where the guess is located within the 2-dimensional array.
+    """
+    pos_x, pos_y = self.find_next_cell_to_fill(pos_x, pos_y)
+    if pos_x == -1:
       return True
-    for e in range(1,10):
-      if self.is_valid(i, j, e):
-        self.grid[i][j] = e
-        if self.solve_backtracking(i, j):
-          return True
-        self.grid[i][j] = 0
+    for guess in range(1, 10):
+      if self.is_valid_guess(pos_x, pos_y, guess):
+        self.grid[pos_x][pos_y] = guess
+        if self.solve_backtracking(pos_x, pos_y): return True
+        self.grid[pos_x][pos_y] = 0
     return False
-
 
 
   def retrieve_grid_basic_format(self):
     """
     Overrides the retrieve_grid_basic_format superclass method, for this algorithm is required
       to convert the solution stored in a list of lists of 81 integers to a string of 81 characters
+    Returned parameters:
+      outcome -- a string of 81 characters converted from the 2-D array of 81 integers
     """
     outcome = ""
     for first_list in self.grid:

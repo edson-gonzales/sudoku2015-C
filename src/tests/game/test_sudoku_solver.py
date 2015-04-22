@@ -7,7 +7,7 @@ from ...game.sudoku_solver import SudokuSolver
 from ...algorithms.algorithm import Algorithm
 from ...algorithms.brute_force import BruteForce
 from ...algorithms.peter_norvig import PeterNorvig
-from ...handlers.txt_handler import TXTHandler
+from ...algorithms.backtracking import Backtracking
 
 
 class TestSudokuSolver(unittest.TestCase):
@@ -28,10 +28,10 @@ class TestSudokuSolver(unittest.TestCase):
     self.assertEquals(0, solver.string_grid_resolved.count('0'))
 
   def test_solver_for_TXT_files_is_working_fine(self):
-    solver = SudokuSolver(PeterNorvig())
+    solver = SudokuSolver(Backtracking())
     solver.solve_sudoku_from_txt_file("content/sources/file_t_001.txt")
-    print (solver.display_grid_source_with_format())
-    print (solver.display_grid_result_with_format())
+    print (solver.display_grid_source_with_format("2D"))
+    print (solver.display_grid_result_with_format("2D"))
     self.assertEquals(0, solver.string_grid_resolved.count('0'))
 
   def test_solver_for_CSV_files_is_working_fine(self):
@@ -48,7 +48,9 @@ class TestSudokuSolver(unittest.TestCase):
     peter_norvig = PeterNorvig()
     solver.change_algorithm(peter_norvig)
     self.assertIsInstance(solver.algorithm, PeterNorvig)
-    # missing backtracking assert
+    backtracking = Backtracking()
+    solver.change_algorithm(backtracking)
+    self.assertIsInstance(solver.algorithm, Backtracking)
 
   def test_string_valid(self):
     solver = SudokuSolver(PeterNorvig())
