@@ -7,7 +7,3 @@ from src.settings import settings
 settings.init()
 # menu = MenuSettings()
 menu = MenuMain()
-
-
-
-

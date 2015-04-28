@@ -15,26 +15,18 @@ from src.tests.algorithms.test_backtracking import TestBacktracking
 settings.init()
 
 xml_suite = unittest.TestLoader().loadTestsFromTestCase(TestXMLHandler)
-
 txt_suite = unittest.TestLoader().loadTestsFromTestCase(TestTXTHandler)
-
 csv_suite = unittest.TestLoader().loadTestsFromTestCase(TestCSVHandler)
-
 sudoku_builder_suite = unittest.TestLoader().loadTestsFromTestCase(TestSudokuBuilder)
-
 sudoku_grid_suite = unittest.TestLoader().loadTestsFromTestCase(TestSudokuGrid)
-
 sudoku_solver_suite = unittest.TestLoader().loadTestsFromTestCase(TestSudokuSolver)
-
 algorithm_suite = unittest.TestLoader().loadTestsFromTestCase(TestAlgorithm)
-
 brute_force_suite = unittest.TestLoader().loadTestsFromTestCase(TestBruteForce)
-
 peter_norvig_suite = unittest.TestLoader().loadTestsFromTestCase(TestPeterNorvig)
-
 backtracking_suite = unittest.TestLoader().loadTestsFromTestCase(TestBacktracking)
 
-alltests = unittest.TestSuite([xml_suite, txt_suite, csv_suite, sudoku_builder_suite, sudoku_grid_suite,\
- sudoku_solver_suite, algorithm_suite, brute_force_suite, peter_norvig_suite, backtracking_suite])
+alltests = unittest.TestSuite([xml_suite, txt_suite, csv_suite, sudoku_builder_suite,\
+sudoku_grid_suite, sudoku_solver_suite, algorithm_suite, brute_force_suite, \
+peter_norvig_suite, backtracking_suite])
 
 unittest.TextTestRunner(verbosity=1).run(alltests)

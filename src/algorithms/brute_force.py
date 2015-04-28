@@ -144,6 +144,8 @@ class BruteForce(Algorithm):
         Keyword arguments:
             index -- index that is tracking the position where to fill the guess.
             guess -- value from 1 to 9 that will be validated in this method.
+        Returned parameter:
+            Boolean -- True if gues is valid for its current row, otherwise False.
         """
         row_index = int(math.floor(index / self.number_of_rows))
         start = self.number_of_rows * row_index
@@ -159,6 +161,8 @@ class BruteForce(Algorithm):
         Keyword arguments:
             index -- index that is tracking the position where to fill the guess.
             guess -- value from 1 to 9 that will be validated in this method.
+        Returned parameter:
+            Boolean -- True if gues is valid for its current column, otherwise False.
         """
         col_index = index % self.number_of_rows
         for cell in range(0, self.number_of_rows):
@@ -173,6 +177,8 @@ class BruteForce(Algorithm):
         Keyword arguments:
             index -- index that is tracking the position where to fill the guess.
             guess -- value from 1 to 9 that will be validated in this method.
+        Returned parameter:
+            Boolean -- True if gues is valid for its current block, otherwise False.
         """
         row_index = int(math.floor(index / self.number_of_rows))
         col_index = index % self.number_of_rows
@@ -186,10 +192,29 @@ class BruteForce(Algorithm):
         col_end = col_start + self.square_root - 1
 
         for cell in range(row_start, row_end + 1):
-            for visit in range(col_start, col_end + 1):
-                i = visit + (cell * self.number_of_rows)
-                if self.puzzle[i] == guess: return False
+            if self.found_duplicate_in_columns(cell, guess, col_start, col_end):
+                return False
         return True
+
+    def found_duplicate_in_columns(self, cell, guess, col_start, col_end):
+        """
+        Look for the first duplicated cell that matches with the guess in certain columns.
+        Keyword arguments:
+            cell -- current cell index where the serach will start.
+            guess -- value from 1 to 9 that will be compared to find duplicates.
+            col_start -- column position where the search operation will start (e.g. from 4 to 6).
+            col_end -- column position where the search operation will end (e.g. from 4 to 6).
+        Returned parameters:
+            cell_duplicate -- True is a duplicate is found, otherwise False.
+        """
+        cell_duplicate = False
+        for visit in range(col_start, col_end + 1):
+            i = visit + (cell * self.number_of_rows)
+            if self.puzzle[i] == guess:
+                cell_duplicate = True
+                break
+        return cell_duplicate
+
 
     def validate_guess(self, index, guess):
         """ Evaluates the 3 validation types required to define a valid guess to solve the puzzle.

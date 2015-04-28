@@ -2,7 +2,7 @@
 import os
 
 def init():
-	"""Return the pathname of the Sudoku2015-C directory"""
-	global root_path 
-	root_path = os.path.dirname(os.path.realpath(__file__))
-	root_path = os.path.sep.join(root_path.split(os.path.sep)[:-2])
+    """Return the pathname of the Sudoku2015-C directory"""
+    global root_path
+    root_path = os.path.dirname(os.path.realpath(__file__))
+    root_path = os.path.sep.join(root_path.split(os.path.sep)[:-2])

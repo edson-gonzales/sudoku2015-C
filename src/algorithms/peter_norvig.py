@@ -49,17 +49,22 @@ class PeterNorvig(Algorithm):
             if len(values[square]) > 1:
                 list_of_values.append((len(values[square]), square))
         (number, square) = min(list_of_values)
-        squares_selected = [self.search(self.assign(values.copy(), square, digit)) \
-        for digit in values[square]]
-        return self.evaluate_squares(squares_selected)
+        dic_values_selected = []
+        for digit in values[square]:
+            dic_values_selected.append(self.search(self.assign(values.copy(), square, digit)))
+        return self.evaluate_dic_values(dic_values_selected)
 
-    def evaluate_squares(self, squares):
-        """Return elements of 'squares' sequence which are true.
+    def evaluate_dic_values(self, dic_values):
+        """Return elements of 'dic_values' sequence which are true.
         Keyword arguments:
-            squares -- An array of squares. (E.g. [A1, A2, ...])
+            dic_values -- An array of {square: digits} dictionary values. (Result of search efforts).
+        Returned parameter:
+            Result could be either False or a dictionary with values to solve the game.
+             i.e: {'A1': '8', 'B2': '9', and so on... 
         """
-        for element in squares:
-            if element: return element
+        for element in dic_values:
+            if element: 
+                return element
         return False
 
     def parse_grid(self, grid_basic_format):
@@ -130,10 +135,10 @@ class PeterNorvig(Algorithm):
                 return False
         ## (2) If a unit unit is reduced to only one place for a value digit, then put it there.
         for unit in self.sudoku_grid.units[s_index]:
-            dplaces = [s_index for s_index in unit if digit in values[s_index]]
-            if len(dplaces) == 0:
+            digit_places = [s_index for s_index in unit if digit in values[s_index]]
+            if len(digit_places) == 0:
                 return False ## Contradiction: no place for this value
-            elif len(dplaces) == 1 and not self.assign(values, dplaces[0], digit):
+            elif len(digit_places) == 1 and not self.assign(values, digit_places[0], digit):
                 # digit can only be in one place in unit; assign it there
                 return False
         return values
