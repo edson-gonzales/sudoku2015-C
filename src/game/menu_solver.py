@@ -65,9 +65,9 @@ class MenuSolver(MenuBase):
         elif self.current_response == "2":
             print("This feature will be soon implemented")
         elif self.current_response == "3":
-            print("This feature will be soon implemented")
+            self.manage_cmd_input_string()
         elif self.current_response == "4":
-            self.manage_random_puzzle()
+            self.generate_puzzle_solution('random')
         elif self.current_response == "5":
             self.solver_menu_completed = False
 
@@ -103,21 +103,35 @@ class MenuSolver(MenuBase):
             else:
                 return True
 
-    def manage_random_puzzle(self):
-        """Retrieve the current XML configuration and generates a puzzle using those parameters"""
+    def generate_puzzle_solution(self, mode='random'):
+        """Retrieve the current XML configuration and generates a puzzle solution using the
+        XML parameters and also use the mode method parameter to decide the source of the grid:
+        txt, csv, cmd, or random"""
         algorithm = self.default_settings['algorithm']
         level = self.default_settings['level']
         min_d = int(self.default_settings['min'])
         max_d = int(self.default_settings['max'])
         starting_digits = random.randint(min_d, max_d)
         print("1. Using the '%s' default algorithm to solve the Sudoku Puzzle " %(algorithm))
-        print("2. Using the '%s' default level to solve the Sudoku Puzzle " %(level))
-        print("3. Using '%s' starting digits to solve the Sudoku Puzzle\n " %(starting_digits))
+        if mode == 'random':
+            print("2. Using the '%s' default level to solve the Sudoku Puzzle " %(level))
+            print("3. Using '%s' starting digits to solve the Sudoku Puzzle\n " %(starting_digits))
 
         class_name = self.default_settings['algorithm'].translate(None, ' ')
         class_name += '()'
         getattr(self.sudoku_solver, 'change_algorithm')(eval(class_name))
+        if mode == 'random':
+            self.sudoku_solver.solve_sudoku_from_grid_generated(starting_digits)
+        elif mode == 'cmd':
+            self.sudoku_solver.solve_sudoku_from_string_provided(self.current_response)
 
-        self.sudoku_solver.solve_sudoku_from_grid_generated(starting_digits)
         print (self.sudoku_solver.display_grid_source_with_format())
         print (self.sudoku_solver.display_grid_result_with_format())
+
+    def manage_cmd_input_string(self):
+        """Validates the user input and then generate the puzzle solution"""
+        if super(MenuSolver, self).validate_puzzle_string():
+            print("\nCommand line successfully read. Processing the request...\n")
+            time.sleep(2)
+            self.generate_puzzle_solution('cmd')
+

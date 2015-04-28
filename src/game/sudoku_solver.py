@@ -74,6 +74,20 @@ class SudokuSolver(object):
         self.algorithm.solve_sudoku(self.string_grid)
         self.string_grid_resolved = self.algorithm.retrieve_grid_basic_format()
 
+    def solve_sudoku_from_string_provided(self, string_provided):
+        """
+        Loads a the sudoku puzzle from a string provided and it is resolved using the
+        algorithm stored.
+        Keyword arguments:
+            string_provided -- INPUT long string of 81 characters where zeros represent empty spots.
+            string_grid -- long string of 81 character where zeros represent empty spots.
+        """
+        self.string_grid = string_provided
+        if self.is_string_grid_valid():
+            self.sudoku_grid.load_grid_values(self.string_grid)
+            self.algorithm.solve_sudoku(self.string_grid)
+            self.string_grid_resolved = self.algorithm.retrieve_grid_basic_format()
+
     def display_grid_source_with_format(self, format_type="simple"):
         """
         Displays the unresolved grid using simple or 2D formats

@@ -58,7 +58,7 @@ class MenuBase(object):
         return is_response_valid
 
     def validate_correct_hint(self):
-        """ Return True once the User entera a valid hint threshold,
+        """ Return True once the User enters a valid hint threshold,
         that should be a digt between 0 and 81
         """
         is_response_hint_valid = False
@@ -74,7 +74,7 @@ class MenuBase(object):
         return is_response_hint_valid
 
     def validate_puzzle_param(self, name):
-        """ Return True once the User entera a valid hint threshold,
+        """ Return True once the User enters a valid hint threshold,
         that should be a digt between 0 and 81
         """
         is_puzzle_parameter_valid = False
@@ -88,3 +88,20 @@ class MenuBase(object):
             else:
                 print("Number is out of the valid range (1 to 9), please try again")
         return is_puzzle_parameter_valid
+
+    def validate_puzzle_string(self):
+        """ Return True once the User enters a valid puzzle string,
+        it should have a length of 81 chars and should contain only digits.
+        """
+        is_puzzle_string_valid = False
+        while is_puzzle_string_valid is False:
+            question = "Enter a valid puzzle. (81 inline digits where zeros represent empty spots)\n"
+            puzzle_parameter = self.ask_user_input(question)
+            if not puzzle_parameter.isdigit():
+                print("The puzzle should contain only digits, please try again")
+            elif len(puzzle_parameter) == 81:
+                is_puzzle_string_valid = True
+                self.current_response = puzzle_parameter
+            else:
+                print("The puzzle should contain exactly 81 digits, please try again")
+        return is_puzzle_string_valid
