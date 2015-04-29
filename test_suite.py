@@ -11,6 +11,7 @@ from src.tests.algorithms.test_algorithm import TestAlgorithm
 from src.tests.algorithms.test_brute_force import TestBruteForce
 from src.tests.algorithms.test_peter_norvig import TestPeterNorvig
 from src.tests.algorithms.test_backtracking import TestBacktracking
+from src.tests.handlers.test_log_handler import TestLOGHandler
 
 settings.init()
 
@@ -24,9 +25,11 @@ algorithm_suite = unittest.TestLoader().loadTestsFromTestCase(TestAlgorithm)
 brute_force_suite = unittest.TestLoader().loadTestsFromTestCase(TestBruteForce)
 peter_norvig_suite = unittest.TestLoader().loadTestsFromTestCase(TestPeterNorvig)
 backtracking_suite = unittest.TestLoader().loadTestsFromTestCase(TestBacktracking)
+log_suite = unittest.TestLoader().loadTestsFromTestCase(TestLOGHandler)
+
 
 alltests = unittest.TestSuite([xml_suite, txt_suite, csv_suite, sudoku_builder_suite,\
 sudoku_grid_suite, sudoku_solver_suite, algorithm_suite, brute_force_suite, \
-peter_norvig_suite, backtracking_suite])
+peter_norvig_suite, backtracking_suite, log_suite])
 
 unittest.TextTestRunner(verbosity=1).run(alltests)
