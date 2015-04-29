@@ -14,6 +14,9 @@ class SudokuLiveGame(MenuBase):
     def __init__(self, default_settings):
         """ Initializes the control menu variables and starts the loop
         Note: This subclass is going to inherit useful and generic methods of MenuBase superclass
+        Keyword arguments:
+            default_settings : This is a dictionary provided by XMLHandler with the current
+            default game settings
         """
         super(SudokuLiveGame, self).__init__()
         self.options, self.current_response = None, None
@@ -33,10 +36,10 @@ class SudokuLiveGame(MenuBase):
     def show_game_settings(self):
         """ Shows the XML config settings that will be used througout the game. """
         level = self.default_settings['level']
-        min_d = int(self.default_settings['min'])
-        max_d = int(self.default_settings['max'])
+        min_digit = int(self.default_settings['min'])
+        max_digit = int(self.default_settings['max'])
         self.max_hints = int(self.default_settings['hints'])
-        self.starting_digits = random.randint(min_d, max_d)
+        self.starting_digits = random.randint(min_digit, max_digit)
         print("1. Using the '%s' game difficulty level" %(level))
         print("2. Using '%s' starting digits (or more) to build the Sudoku Puzzle" %(self.starting_digits))
         print("3. The maximum number of hints for this level is '%s'\n " %(self.max_hints))
@@ -123,8 +126,9 @@ class SudokuLiveGame(MenuBase):
             self.continue_game = True
 
     def quit(self, type="completed"):
-        """ User can leave the game loop anytime after confirming with a firendly message, and
+        """ User can leave the game loop anytime after confirming with a friendly message, and
         also the loop is skipped when the game was successfully filled with 81 correct numbers.
+        False is returned in previous cases, otherwise True is returned and the gae continues
         """
         if type is None:
             question = '\nWould you really want to leave the game?, your progress will be discarded'
@@ -146,6 +150,7 @@ class SudokuLiveGame(MenuBase):
         """ User input is validated for each available mode type.
         e.g. for fill command, we validate 3 params from 1,2,...9 range 
         for hint and clear, we validate 2 params from 1,2,..9 range
+        True is returned if all params are correct, False otherwise.
         """
         all_params_correct = False
         if mode == "fill":
@@ -211,16 +216,18 @@ class SudokuLiveGame(MenuBase):
 
     def check_game_continuity(self):
         """When all the data of the puzzle is different than zero or point, we start to check the
-        game correctness ."""
+        game correctness .
+        True is returned to continue the loop because the puzzle is not resolved yet
+        False is returned to finish the loop becuase he puzzle has been properly solved."""
         if self.string_grid.count('0') == 0:
             return self.validate_game_correctness()
         else:
             return True
 
     def validate_game_correctness(self):
-        """Reusing backtracking checker methods to verify taht the solutionprovided by the user
+        """Reusing backtracking checker methods to verify that the solution provided by the user
         meets the sudoku resolution rules in row, columns and blocks,
-        Leave the game if it is correaclty solved, otherwise a warning message is displayed and
+        Leave the game if it is correctly solved, otherwise a warning message is displayed and
         the game continues"""
         validator = Backtracking()
         validator.load_puzzle(self.string_grid)

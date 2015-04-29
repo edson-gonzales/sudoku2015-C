@@ -51,8 +51,12 @@ class TXTHandler(FileHandler):
         Returned parameters:
         abs_file_path -- absolute path to the TXT file, performed thanks to os.path.join method 
          """
-        file_path = os.path.normpath(input_source)
-        abs_file_path = os.path.join(settings.root_path, file_path)
+        abs_file_path = ""
+        if os.path.isabs(input_source):
+            abs_file_path = input_source
+        else:
+            file_path = os.path.normpath(input_source)
+            abs_file_path = os.path.join(settings.root_path, file_path)
         return abs_file_path
 
     def save_file(self, output=None, data=None):

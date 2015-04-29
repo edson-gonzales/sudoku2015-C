@@ -1,6 +1,7 @@
 """ MenuSolver module presents the solve options to the user when the action is chosen in MenuMain module"""
 
 from menu_base import MenuBase
+from menu_file_explorer import MenuFileExplorer
 from ..game.sudoku_solver import SudokuSolver
 from ..algorithms.algorithm import Algorithm
 from ..algorithms.brute_force import BruteForce
@@ -11,17 +12,27 @@ import time
 import random
 import sys
 
+
 class MenuSolver(MenuBase):
     def __init__(self, default_settings):
         """ Initializes the control menu variables and starts the loop
         Note: This subclass is going to inherit useful and generic methods of MenuBase superclass
+        Keyword arguments:
+            default_settings : This is a dictionary provided by XMLHandler with the current
+            default game settings
         """
         super(MenuSolver, self).__init__()
         self.options = None
         self.current_response = None
         self.continue_solver_menu = True
         self.solver_menu_completed = False
+        self.file_explorer = None
         self.default_settings = default_settings
+        self.algorithm = None
+        self.level = None
+        self.min_digit = None
+        self.max_digit = None
+        self.starting_digits = None
         self.sudoku_solver = SudokuSolver()
         self.solver_loop()
 
@@ -34,7 +45,7 @@ class MenuSolver(MenuBase):
         print("SUDOKU 2015-C SOLVER MODULE")
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         print("Loading available Menu Options...")
-        time.sleep(2)
+        time.sleep(1)
         self.define_solver_options()
         print(super(MenuSolver, self).build_multiple_options())
         if super(MenuSolver, self).validate_user_response():
@@ -61,13 +72,15 @@ class MenuSolver(MenuBase):
         """
         self.solver_menu_completed = True
         if self.current_response == "1":
-            print("This feature will be soon implemented")
+            self.file_explorer = MenuFileExplorer('txt')
+            self.generate_puzzle_solution('txt')
         elif self.current_response == "2":
-            print("This feature will be soon implemented")
+            self.file_explorer = MenuFileExplorer('csv')
+            self.generate_puzzle_solution('csv')
         elif self.current_response == "3":
-            print("This feature will be soon implemented")
+            self.manage_cmd_input_string()
         elif self.current_response == "4":
-            self.manage_random_puzzle()
+            self.generate_puzzle_solution('random')
         elif self.current_response == "5":
             self.solver_menu_completed = False
 
@@ -103,21 +116,55 @@ class MenuSolver(MenuBase):
             else:
                 return True
 
-    def manage_random_puzzle(self):
-        """Retrieve the current XML configuration and generates a puzzle using those parameters"""
-        algorithm = self.default_settings['algorithm']
-        level = self.default_settings['level']
-        min_d = int(self.default_settings['min'])
-        max_d = int(self.default_settings['max'])
-        starting_digits = random.randint(min_d, max_d)
-        print("1. Using the '%s' default algorithm to solve the Sudoku Puzzle " %(algorithm))
-        print("2. Using the '%s' default level to solve the Sudoku Puzzle " %(level))
-        print("3. Using '%s' starting digits to solve the Sudoku Puzzle\n " %(starting_digits))
-
-        class_name = self.default_settings['algorithm'].translate(None, ' ')
-        class_name += '()'
+    def generate_puzzle_solution(self, mode='random'):
+        """Retrieve the current XML configuration and generates a puzzle solution using the
+        XML parameters and also use the mode method parameter to decide the source of the grid:
+        txt, csv, cmd, or random
+        Keyword arguments:
+            mode -- parameter that will vary from random, txt and csv to display and use the
+            correct resolution methods.
+        """
+        self.set_game_settings()
+        print("1. Using '%s' default algorithm to solve Sudoku Puzzle" %(self.algorithm))
+        class_name = self.default_settings['algorithm'].translate(None, ' ') + '()'
         getattr(self.sudoku_solver, 'change_algorithm')(eval(class_name))
+        if mode == 'random':
+            print("2. Using the '%s' default level to solve the Sudoku Puzzle " %(self.level))
+            print("3. Using '%s' starting digits to create the Puzzle\n " %(self.starting_digits))
+            self.sudoku_solver.solve_sudoku_from_grid_generated(self.starting_digits)
+            self.display_sudoku_puzzle_results("2D_point")
+        elif mode == 'cmd':
+            self.sudoku_solver.solve_sudoku_from_string_provided(self.current_response)
+            self.display_sudoku_puzzle_results("2D_point")
+        elif mode == 'txt' or mode == 'csv':
+            method_name = "solve_sudoku_from_" + mode + "_file"
+            try:
+                getattr(self.sudoku_solver, method_name)(self.file_explorer.file_chosen)
+                self.display_sudoku_puzzle_results()
+            except ValueError:
+                pass 
+        
+    def display_sudoku_puzzle_results(self, format_type="simple"):
+        """
+        Displays the unresolved and resolved grids using simple, 2D or 2D_point formats
+        Keyword arguments:
+            format_type -- initially can take the simple, 2D and 2D_point format types.
+        """
+        print (self.sudoku_solver.display_grid_source_with_format(format_type))
+        print (self.sudoku_solver.display_grid_result_with_format(format_type))
 
-        self.sudoku_solver.solve_sudoku_from_grid_generated(starting_digits)
-        print (self.sudoku_solver.display_grid_source_with_format())
-        print (self.sudoku_solver.display_grid_result_with_format())
+    def set_game_settings(self):
+        """The contructor parameter default settings is accessed to extract the game settings"""
+        self.algorithm = self.default_settings['algorithm']
+        self.level = self.default_settings['level']
+        self.min_digit = int(self.default_settings['min'])
+        self.max_digit = int(self.default_settings['max'])
+        self.starting_digits = random.randint(self.min_digit, self.max_digit)
+
+
+    def manage_cmd_input_string(self):
+        """Validates the user input and then generate the puzzle solution"""
+        if super(MenuSolver, self).validate_puzzle_string():
+            print("\nCommand line successfully read. Processing the request...\n")
+            time.sleep(2)
+            self.generate_puzzle_solution('cmd')

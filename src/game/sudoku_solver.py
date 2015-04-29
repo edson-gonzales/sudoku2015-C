@@ -42,7 +42,8 @@ class SudokuSolver(object):
             self.string_grid_resolved = self.algorithm.retrieve_grid_basic_format()
 
         else:
-            print("Error 1001: The TXT grid should contain only numbers in each square")
+            print("Error 1001: The TXT file should only contain 81 valid digits")
+            raise ValueError('The TXT file should only contain 81 valid digits')
 
     def solve_sudoku_from_csv_file(self, relative_path):
         """
@@ -59,7 +60,8 @@ class SudokuSolver(object):
             self.algorithm.solve_sudoku(self.string_grid)
             self.string_grid_resolved = self.algorithm.retrieve_grid_basic_format()
         else:
-            print("Error 1002: The CSV grid should contain only numbers in each square")
+            print("Error 1002: The CSV file should only contain 81 valid digits separated by commas")
+            raise ValueError('The CSV file should only contain 81 valid digits separated by commas')
 
     def solve_sudoku_from_grid_generated(self, visible_numbers):
         """ Generates a random puzzle and then proceed to solved it using the algortihm stored.
@@ -74,9 +76,23 @@ class SudokuSolver(object):
         self.algorithm.solve_sudoku(self.string_grid)
         self.string_grid_resolved = self.algorithm.retrieve_grid_basic_format()
 
+    def solve_sudoku_from_string_provided(self, string_provided):
+        """
+        Loads a the sudoku puzzle from a string provided and it is resolved using the
+        algorithm stored.
+        Keyword arguments:
+            string_provided -- INPUT long string of 81 characters where zeros represent empty spots.
+            string_grid -- long string of 81 character where zeros represent empty spots.
+        """
+        self.string_grid = string_provided
+        if self.is_string_grid_valid():
+            self.sudoku_grid.load_grid_values(self.string_grid)
+            self.algorithm.solve_sudoku(self.string_grid)
+            self.string_grid_resolved = self.algorithm.retrieve_grid_basic_format()
+
     def display_grid_source_with_format(self, format_type="simple"):
         """
-        Displays the unresolved grid using simple or 2D formats
+        Displays the unresolved grid using simple, 2D, or 2D_point formats
         Keyword arguments:
             format_type -- initially can take the simple and 2D format types.
         """
@@ -101,6 +117,8 @@ class SudokuSolver(object):
             return self.sudoku_grid.display_simple_grid()
         elif format_type == "2D":
             return self.sudoku_grid.display_2D_grid()
+        elif format_type == "2D_point":
+            return self.sudoku_grid.display_2D_grid_with_points()
         else:
             return "Invalid Grid Puzzle format type requested"
 
@@ -110,4 +128,4 @@ class SudokuSolver(object):
 
     def is_string_grid_valid(self):
         """ Checks if the long string with 81 characters contain only numbers in its content"""
-        return self.string_grid.isdigit()
+        return self.string_grid.isdigit() and len(self.string_grid) == 81
