@@ -36,6 +36,6 @@
     </algorithm>
     <output active="true" name="Game Output">
       <path>content/user/</path>
-      <filename>12312</filename>  
+      <filename>output_file.txt</filename>  
     </output>
 </settings>

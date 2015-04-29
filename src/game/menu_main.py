@@ -31,7 +31,7 @@ class MenuMain(MenuBase):
         print("SUDOKU 2015-C MAIN MENU")
         print("~~~~~~~~~~~~~~~~~~~~~~~~")
         print("Loading available Menu Options...")
-        time.sleep(2)
+        time.sleep(1)
         self.define_main_options()
         print (super(MenuMain, self).build_multiple_options())
         if super(MenuMain, self).validate_user_response():

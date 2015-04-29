@@ -44,7 +44,7 @@ class MenuBase(object):
         Keyword arguments:
             options -- dictionary of all the main menu options.
         Returned parameter:
-            is_response_valid -- return True if the user chooseS one of the valid keys of the
+            is_response_valid -- return True if the user chooses one of the valid keys of the
                 dictionary self.options
         """
         is_response_valid = False
@@ -76,6 +76,8 @@ class MenuBase(object):
     def validate_puzzle_param(self, name):
         """ Return True once the User enters a valid hint threshold,
         that should be a digt between 0 and 81
+        Keyword arguments:
+            name: the type of value that will be asked in the user question
         """
         is_puzzle_parameter_valid = False
         while is_puzzle_parameter_valid is False:
@@ -95,7 +97,8 @@ class MenuBase(object):
         """
         is_puzzle_string_valid = False
         while is_puzzle_string_valid is False:
-            question = "Enter a valid puzzle. (81 inline digits where zeros represent empty spots)\n"
+            question = "Enter a valid puzzle. (81 inline digits where zeros " +\
+                "represent empty spots) E.g. 01040506.... and so on\npuzzle"
             puzzle_parameter = self.ask_user_input(question)
             if not puzzle_parameter.isdigit():
                 print("The puzzle should contain only digits, please try again")
